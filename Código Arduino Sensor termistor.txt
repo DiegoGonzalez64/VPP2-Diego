@@ -1,0 +1,54 @@
+
+
+#include <SoftwareSerial.h>
+#include <Thermistor.h> //BIBLIOTECA
+
+char NOMBRE[6] = "HM-10";
+char BPS = '5';
+char PASS[10] = "1234";
+
+char c;
+int a;
+
+Thermistor temp(3); //Variable de tipo Thermistor, PIN ANALÓGICO (A3) es adonde el sensor se conecta
+void setup() {
+  Serial.begin(9600);
+  delay(6000); //Lectura cada 6 segundos
+
+  Serial.print("AT");
+  delay(1000);
+
+  Serial.print("AT+NAME");
+  Serial.print(NOMBRE);
+  delay(1000);
+
+  Serial.print("AT+BAUD");
+  Serial.print(BPS);
+  delay(1000);
+
+  Serial.print("AT+PIN");
+  Serial.print(PASS);
+  delay(1000);
+
+
+}
+void loop() {
+  int temperature = temp.getTemp(); //Variable entera (int)
+  Serial.print("Temperatura: "); //Imprime texto en el Monitor
+  Serial.print(temperature); //Imprime la temperatura sensada
+  Serial.println("*C");
+  delay(6000); //Lectura cada 6 segundos
+
+  if(Serial.available()){
+    c=Serial.read();
+    while (c!='d'){
+      a=analogRead(0);
+      Serial.println(a);
+      delay(100);
+      c=Serial.read();
+      if (c=='d'){
+        return;
+      }
+    }
+  }
+}
